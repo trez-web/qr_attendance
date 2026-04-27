@@ -8,7 +8,7 @@ SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',
     '8vpp)&91jf&4)xr#nts&*z_ayaw6)4s1-%#s-c^xij0muf1#cw'
 )
-DEBUG = True  # Required for admin static files via staticfiles app
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = ['*']
 
 # --- Apps ---
@@ -95,7 +95,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app',
     'https://*.ngrok.io',
-    'https://1282-197-186-75-99.ngrok-free.app',
+    'https://*.up.railway.app',
     'https://127.0.0.1',
     'https://localhost',
 ]
