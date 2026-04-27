@@ -1,0 +1,55 @@
+{% extends 'attendance/base.html' %}
+{% block content %}
+
+<div class="max-w-sm mx-auto text-center">
+    <div class="glass-card rounded-2xl p-8">
+
+        <h1 class="text-2xl font-bold text-white mb-1">Your QR Code</h1>
+        <p class="text-blue-300 text-sm mb-1">{{ meeting.title }}</p>
+        <p class="text-slate-400 text-xs mb-6">{{ meeting.date }}</p>
+
+        {% if qr_path %}
+        <!-- QR frame -->
+        <div class="relative inline-block p-3 rounded-2xl bg-white shadow-2xl mb-4">
+            <img src="{{ qr_path }}"
+                 alt="QR Code"
+                 id="qr-img"
+                 class="w-52 h-52 block"
+                 onerror="this.style.display='none';document.getElementById('qr-err').classList.remove('hidden')">
+            <!-- Corner accents -->
+            <span class="absolute top-1 left-1 w-5 h-5 border-t-4 border-l-4 border-blue-500 rounded-tl-lg"></span>
+            <span class="absolute top-1 right-1 w-5 h-5 border-t-4 border-r-4 border-blue-500 rounded-tr-lg"></span>
+            <span class="absolute bottom-1 left-1 w-5 h-5 border-b-4 border-l-4 border-blue-500 rounded-bl-lg"></span>
+            <span class="absolute bottom-1 right-1 w-5 h-5 border-b-4 border-r-4 border-blue-500 rounded-br-lg"></span>
+        </div>
+
+        <div id="qr-err" class="hidden bg-red-500/20 border border-red-500/40 text-red-300 text-sm px-4 py-3 rounded-lg mb-4">
+            Image failed to load. <a href="" class="underline">Refresh</a>
+        </div>
+
+        <p class="text-blue-300 text-xs mb-6 flex items-center justify-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Show this to the scanner at the meeting
+        </p>
+
+        <!-- Download button -->
+        <a href="{{ qr_path }}" download
+           class="btn-primary text-white font-semibold px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-2 mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Save QR Code
+        </a>
+
+        {% else %}
+        <div class="bg-red-500/20 border border-red-500/40 text-red-300 px-4 py-4 rounded-lg mb-6">
+            QR code could not be generated. Please try again.
+        </div>
+        {% endif %}
+
+        <div class="pt-4 border-t border-white/10">
+            <a href="{% url 'meeting_list' %}"
+               class="text-blue-400 hover:text-blue-300 text-sm transition">← Back to Meetings</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

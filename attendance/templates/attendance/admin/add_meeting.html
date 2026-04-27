@@ -1,0 +1,30 @@
+{% extends 'attendance/admin/base.html' %}
+{% block title %}Add Meeting{% endblock %}
+{% block nav_meetings %}active{% endblock %}
+{% block page_title %}Add Meeting{% endblock %}
+{% block content %}
+<div class="max-w-lg">
+    <h1 class="text-2xl font-bold text-white mb-6">Add Meeting</h1>
+    <div class="card p-6">
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Title</label>
+                <input type="text" name="title" class="input-f" placeholder="Meeting title" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Location</label>
+                <input type="text" name="location" class="input-f" placeholder="Optional">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Date & Time</label>
+                <input type="datetime-local" name="date" class="input-f" required>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="btn btn-green flex-1">Create Meeting</button>
+                <a href="{% url 'admin_meetings' %}" class="btn text-slate-300 bg-white/10 flex-1 text-center">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

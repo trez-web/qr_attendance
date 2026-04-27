@@ -1,0 +1,61 @@
+{% extends 'attendance/base.html' %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-white">Meetings</h1>
+        <p class="text-blue-300 text-sm mt-1">{{ meetings|length }} session{{ meetings|length|pluralize }} total</p>
+    </div>
+    <div class="flex gap-3 flex-wrap">
+        <a href="{% url 'add_meeting' %}"
+           class="btn-success text-white font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Add Meeting
+        </a>
+        <a href="{% url 'custom_add_staff' %}"
+           class="btn-warning text-white font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            Manage Users
+        </a>
+    </div>
+</div>
+
+{% if meetings %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for meeting in meetings %}
+    <div class="glass-card rounded-2xl p-5 flex flex-col gap-3">
+        <div class="flex items-start justify-between">
+            <div>
+                <h2 class="font-bold text-lg text-white leading-tight">{{ meeting.title }}</h2>
+                <p class="text-blue-300 text-xs mt-1 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    {{ meeting.date }}
+                </p>
+                {% if meeting.location %}
+                <p class="text-slate-400 text-xs mt-0.5">{{ meeting.location }}</p>
+                {% endif %}
+            </div>
+            <span class="bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">
+                {{ meeting.attendee_count }} present
+            </span>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-white/10">
+            <a href="{% url 'download_attendance' meeting.id %}"
+               class="btn-success text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 w-fit">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Export CSV
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="glass-card rounded-2xl p-12 text-center">
+    <p class="text-slate-400 text-lg">No meetings yet.</p>
+    <a href="{% url 'add_meeting' %}" class="btn-success inline-block mt-4 text-white font-semibold px-5 py-2 rounded-xl text-sm">+ Add First Meeting</a>
+</div>
+{% endif %}
+
+{% endblock %}

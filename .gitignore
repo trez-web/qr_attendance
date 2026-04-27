@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+db.sqlite3
+media/
+.env
+venv/
+.idea/
+.vscode/
+*.log
+ngrok-v4-stable-linux-amd64.zip
+staticfiles/

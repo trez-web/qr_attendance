@@ -1,0 +1,52 @@
+{% extends 'attendance/base.html' %}
+{% block content %}
+
+<div class="max-w-md mx-auto">
+    <div class="glass-card rounded-2xl p-8">
+        <h1 class="text-2xl font-bold text-white mb-2">Add Meeting</h1>
+        <p class="text-blue-300 text-sm mb-6">Create a new meeting event</p>
+
+        {% if form.errors %}
+        <div class="bg-red-500/20 border border-red-500/50 text-red-300 text-sm px-4 py-3 rounded-lg mb-5">
+            Please fix the errors below.
+        </div>
+        {% endif %}
+
+        <form method="POST" class="space-y-5">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Meeting Title</label>
+                <input type="text" name="title" value="{{ form.title.value|default:'' }}"
+                       placeholder="e.g. Weekly Team Sync"
+                       class="input-field" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Location</label>
+                <input type="text" name="location" value="{{ form.location.value|default:'' }}"
+                       placeholder="e.g. Conference Room A"
+                       class="input-field">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Date & Time</label>
+                <input type="datetime-local" name="date" value="{{ form.date.value|default:'' }}"
+                       class="input-field" required>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="submit"
+                        class="btn-success text-white font-semibold px-5 py-2.5 rounded-xl text-sm flex-1">
+                    Create Meeting
+                </button>
+                <a href="{% url 'meeting_list' %}"
+                   class="glass text-slate-300 font-medium px-5 py-2.5 rounded-xl text-sm text-center hover:bg-white/10">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

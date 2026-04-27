@@ -1,0 +1,52 @@
+{% extends 'attendance/base.html' %}
+{% block content %}
+
+<div class="max-w-md mx-auto">
+    <div class="glass-card rounded-2xl p-8">
+        <h1 class="text-2xl font-bold text-white mb-2">Assign Staff</h1>
+        <p class="text-blue-300 text-sm mb-6">Assign a staff member to a meeting</p>
+
+        {% if form.errors %}
+        <div class="bg-red-500/20 border border-red-500/50 text-red-300 text-sm px-4 py-3 rounded-lg mb-5">
+            Please correct the errors below.
+        </div>
+        {% endif %}
+
+        <form method="POST" class="space-y-5">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Select Meeting</label>
+                <select name="meeting" class="input-field" required>
+                    <option value="">— Choose meeting —</option>
+                    {% for val, label in form.meeting.field.choices %}
+                        {% if val %}<option value="{{ val }}" {% if form.meeting.value == val|stringformat:"s" %}selected{% endif %}>{{ label }}</option>{% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-blue-200 mb-1.5">Select Staff</label>
+                <select name="staff" class="input-field" required>
+                    <option value="">— Choose staff member —</option>
+                    {% for val, label in form.staff.field.choices %}
+                        {% if val %}<option value="{{ val }}" {% if form.staff.value == val|stringformat:"s" %}selected{% endif %}>{{ label }}</option>{% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="submit"
+                        class="btn-primary text-white font-semibold px-5 py-2.5 rounded-xl text-sm flex-1">
+                    Assign Staff
+                </button>
+                <a href="{% url 'meeting_list' %}"
+                   class="glass text-slate-300 font-medium px-5 py-2.5 rounded-xl text-sm text-center hover:bg-white/10">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Attendance System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%); min-height: 100vh; }
+
+        .glass {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .glass-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        .glass-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+
+        .input-field {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #f1f5f9;
+            transition: all 0.3s;
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .input-field:focus { outline: none; border-color: #3b82f6; background: rgba(59,130,246,0.1); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        .input-field::placeholder { color: rgba(255,255,255,0.3); }
+        /* Style Django form selects/inputs rendered via form.as_p */
+        select.input-field option { background: #1e3a5f; color: #f1f5f9; }
+
+        .btn-primary { background: linear-gradient(135deg, #3b82f6, #6366f1); transition: all 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99,102,241,0.45); }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); transition: all 0.3s; }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16,185,129,0.4); }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); transition: all 0.3s; }
+        .btn-warning:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245,158,11,0.4); }
+        .btn-danger  { background: linear-gradient(135deg, #ef4444, #dc2626); transition: all 0.3s; }
+        .btn-danger:hover  { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(239,68,68,0.4); }
+
+        .nav-link { color: rgba(255,255,255,0.75); transition: color 0.2s; padding: 0.35rem 0.75rem; border-radius: 0.5rem; }
+        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+        /* Fade-in for page content */
+        .page-enter { animation: fadeUp 0.4s ease both; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+        /* Toast */
+        #toast { transition: all 0.4s; }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="glass sticky top-0 z-50 px-6 py-3 shadow-xl border-b border-white/10">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center gap-2.5 font-bold text-lg text-white">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                     style="background:linear-gradient(135deg,#3b82f6,#6366f1);box-shadow:0 4px 10px rgba(59,130,246,0.4)">
+                    <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/>
+                        <rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/>
+                        <rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/>
+                    </svg>
+                </div>
+                <span class="hidden sm:inline">QR Attendance</span>
+            </a>
+            <div class="flex items-center gap-1">
+                {% if user.is_authenticated %}
+                    <!-- User avatar pill -->
+                    <div class="flex items-center gap-2 bg-white/5 rounded-full px-3 py-1.5 mr-2">
+                        <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <span class="text-xs text-blue-200 hidden sm:inline font-medium">{{ user.username }}</span>
+                    </div>
+                    {% if user.is_staff %}
+                        {% if user.is_superuser %}
+                            <a href="{% url 'admin_dashboard' %}" class="nav-link text-sm">Admin Panel</a>
+                        {% else %}
+                            <a href="{% url 'scan' %}" class="nav-link text-sm">Scanner</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'student_dashboard' %}" class="nav-link text-sm">My QR Codes</a>
+                    {% endif %}
+                    <a href="{% url 'change_password' %}" class="nav-link text-sm">🔑</a>
+                    <a href="{% url 'user_logout' %}"
+                       class="ml-1 btn-danger text-white text-sm font-medium px-3 py-1.5 rounded-lg">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="flex-grow container max-w-5xl mx-auto px-4 py-8 page-enter">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass border-t border-white/10 py-3 px-6 text-center text-xs text-blue-300/60">
+        Copyright © 2025 QR Attendance System &nbsp;·&nbsp; Developed by Eng Kweka
+    </footer>
+
+    <!-- Toast container -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden max-w-xs"></div>
+
+    <script>
+        // Auto-dismiss Django messages as toast if any flash messages exist
+        function showToast(msg, type='success') {
+            const t = document.getElementById('toast');
+            const color = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+            t.innerHTML = `<div class="${color} text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-2">
+                <span>${msg}</span>
+                <button onclick="document.getElementById('toast').classList.add('hidden')" class="ml-auto opacity-70 hover:opacity-100">✕</button>
+            </div>`;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 4000);
+        }
+    </script>
+</body>
+</html>

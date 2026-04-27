@@ -1,0 +1,8 @@
+{% extends 'attendance/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6 text-center">
+    <h2 class="text-2xl font-bold mb-4">QR Code for {{ meeting.title }}</h2>
+    <img src="{{ qr_url }}" alt="QR Code" class="mx-auto">
+</div>
+{% endblock %}

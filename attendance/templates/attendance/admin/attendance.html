@@ -1,0 +1,67 @@
+{% extends 'attendance/admin/base.html' %}
+{% block title %}Attendance{% endblock %}
+{% block nav_attendance %}active{% endblock %}
+{% block page_title %}Attendance Records{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold text-white mb-6">Attendance Records</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Meeting selector -->
+    <div class="card p-5">
+        <h2 class="text-sm font-semibold text-blue-300 uppercase tracking-widest mb-3">Select Meeting</h2>
+        <div class="space-y-1">
+            {% for m in meetings %}
+            <a href="{% url 'admin_attendance_meeting' m.id %}"
+               class="block px-3 py-2 rounded-lg text-sm transition
+                      {% if selected and selected.id == m.id %}bg-blue-600 text-white font-semibold{% else %}text-slate-300 hover:bg-white/10{% endif %}">
+                {{ m.title }}
+                <span class="text-xs opacity-60 block">{{ m.date|date:"d M Y" }}</span>
+            </a>
+            {% empty %}
+            <p class="text-slate-500 text-xs">No meetings.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Records -->
+    <div class="lg:col-span-3 card p-5">
+        {% if selected %}
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 class="text-lg font-bold text-white">{{ selected.title }}</h2>
+                <p class="text-blue-300 text-xs">{{ records|length }} attendee{{ records|length|pluralize }}</p>
+            </div>
+            <a href="{% url 'admin_download_csv' selected.id %}" class="btn btn-green text-xs">📥 Download CSV</a>
+        </div>
+        {% if records %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead><tr class="text-slate-400 text-xs uppercase border-b border-white/10">
+                    <th class="pb-2 text-left">#</th>
+                    <th class="pb-2 text-left">Username</th>
+                    <th class="pb-2 text-left">Email</th>
+                    <th class="pb-2 text-left">Timestamp</th>
+                </tr></thead>
+                <tbody class="divide-y divide-white/5">
+                {% for a in records %}
+                <tr>
+                    <td class="py-2 text-slate-500">{{ forloop.counter }}</td>
+                    <td class="py-2 text-white font-medium">{{ a.user.username }}</td>
+                    <td class="py-2 text-slate-400">{{ a.user.email|default:"—" }}</td>
+                    <td class="py-2 text-slate-400 text-xs">{{ a.timestamp|date:"d M Y H:i:s" }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-slate-500 text-sm">No attendance recorded for this meeting yet.</p>
+        {% endif %}
+        {% else %}
+        <div class="flex items-center justify-center h-48 text-slate-500">
+            ← Select a meeting to view attendance
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
